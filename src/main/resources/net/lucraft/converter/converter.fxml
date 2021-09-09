@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane minHeight="480.0" minWidth="720.0" prefHeight="540.0" prefWidth="836.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.lucraft.converter.ConverterController">
+   <children>
+      <ButtonBar buttonMinWidth="32.0" buttonOrder="" layoutX="16.0" layoutY="14.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
+        <buttons>
+            <CheckBox fx:id="cbCombine" mnemonicParsing="false" prefHeight="17.0" prefWidth="198.0" text="Combine into single PDF" />
+            <Button fx:id="btnAddFiles" minWidth="0.0" mnemonicParsing="false" prefHeight="25.0" text="Add Files" />
+            <Button fx:id="btnRemoveFiles" mnemonicParsing="false" text="Remove Files" />
+          <Button fx:id="btnConvert" mnemonicParsing="false" text="Convert" />
+            <Button fx:id="btnClear" mnemonicParsing="false" text="Clear" />
+        </buttons>
+      </ButtonBar>
+      <ListView fx:id="lwFiles" layoutX="16.0" layoutY="58.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="58.0" />
+      <ProgressBar layoutX="-10.0" layoutY="531.0" prefHeight="8.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+   </children>
+</AnchorPane>
