@@ -12,7 +12,7 @@ repositories {
 }
 
 ext {
-    junitVersion = '5.7.1'
+    junitVersion = '5.7.2'
 }
 
 sourceCompatibility = '16'
@@ -24,17 +24,22 @@ tasks.withType(JavaCompile) {
 
 application {
     mainModule = 'net.lucraft.converter'
-    mainClass = 'net.lucraft.converter.HelloApplication'
+    mainClass = 'net.lucraft.converter.ConverterApplication'
 }
 
 javafx {
     version = '16'
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web']
+    modules = [
+            'javafx.controls',
+            'javafx.fxml',
+            'javafx.web',
+            'javafx.swing'
+    ]
 }
 
 dependencies {
     implementation('org.controlsfx:controlsfx:11.1.0')
-    implementation('com.dlsc.formsfx:formsfx-core:11.3.2') {
+    implementation('com.dlsc.formsfx:formsfx-core:11.4.2') {
         exclude(group: 'org.openjfx')
     }
     implementation('net.synedra:validatorfx:0.1.13') {
@@ -42,9 +47,13 @@ dependencies {
     }
     implementation('org.kordamp.ikonli:ikonli-javafx:12.2.0')
     implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
-    implementation('eu.hansolo:tilesfx:11.48') {
+    implementation('eu.hansolo:tilesfx:16.0.3') {
         exclude(group: 'org.openjfx')
     }
+
+    implementation('com.itextpdf:itext7-core:7.1.16')
+    implementation("commons-io:commons-io:2.6")
+    implementation('org.jetbrains:annotations:16.0.2')
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
