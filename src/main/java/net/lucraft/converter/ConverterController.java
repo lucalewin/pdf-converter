@@ -2,16 +2,15 @@ package net.lucraft.converter;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.stage.FileChooser;
+import net.lucraft.converter.config.Config;
 import net.lucraft.converter.ui.FileListCell;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Objects;
 
 public class ConverterController {
 
@@ -21,6 +20,9 @@ public class ConverterController {
 	@FXML private Button btnClear;
 	@FXML private CheckBox cbCombine;
 	@FXML private ListView<File> lwFiles;
+
+	@FXML private ContextMenu listViewContextMenu;
+	@FXML private MenuItem listViewMenuItemDelete;
 
 	public ConverterController() { }
 
@@ -32,14 +34,34 @@ public class ConverterController {
 		btnClear.setOnAction(event -> clear());
 		lwFiles.setCellFactory(param -> new FileListCell());
 		lwFiles.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		lwFiles.setOnDragOver(this::onDragOver);
+		lwFiles.setOnDragDropped(this::onDragDropped);
+		lwFiles.setOnDragExited(event -> lwFiles.setStyle("-fx-background-color: #fff"));
+		listViewMenuItemDelete.setDisable(true);
 	}
 
 	/**
-	 * Used when the user drags and drops files into the {@link ListView}
+	 *
+	 * @param event the {@link DragEvent}
 	 */
-	@FXML
-	private void dragAndDrop() {
+	private void onDragOver(DragEvent event) {
+		// check if files are dragged and if those are files or directories
+		if (event.getDragboard().hasFiles() && event.getDragboard().getFiles().stream().allMatch(File::isFile)) {
+			event.acceptTransferModes(TransferMode.COPY);
+			lwFiles.setStyle("""
+				-fx-border-insets: 5;
+				-fx-border-width: 5px;
+				-fx-border-color: #1bc124;
+				-fx-border-style: dashed;
+				-fx-border-radius: 7px;
+				-fx-background-color: #c7f0bd;
+				-fx-background-radius: 12px""");
+		}
+		event.consume();
+	}
 
+	private void onDragDropped(DragEvent event) {
+		lwFiles.getItems().addAll(event.getDragboard().getFiles());
 	}
 
 	/**
@@ -50,27 +72,25 @@ public class ConverterController {
 			List<File> files = lwFiles.getItems();
 
 			if (cbCombine.isSelected()) {
-				if (FileUtil.containsOnlyImages(files)) {
-					Converter.convertImagesToSinglePdf(files);
+				FileChooser chooser = new FileChooser();
+				chooser.setInitialDirectory(new File(Config.getInstance().getDefaultFolder()));
+				chooser.setInitialFileName(Config.getInstance().getDefaultFilename());
+				chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF File", "*.pdf"));
+
+				File out = chooser.showSaveDialog(null);
+
+				if (out != null) {
+					Converter.merge(files, out);
 				}
 			} else {
-				if (FileUtil.containsOnlyImages(files)) {
-					Converter.convertImagesToPdfs(files);
-				} else {
-					files.forEach(file -> {
-						if (!FileUtil.isPdf(file)) {
-							// a pdf cannot be converted to a pdf :)
-							// images
-							if (FileUtil.isImageFile(file)) {
-								try {
-									Converter.convertImageToPdf(file);
-								} catch (MalformedURLException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-					});
-				}
+//				files.stream().filter(FileUtil::isImageFile).forEach(file -> );
+				files.forEach(file -> {
+					if (FileUtil.isImageFile(file)) {
+						String filename = file.getAbsolutePath();
+						File out = new File(filename.substring(0, filename.lastIndexOf('.')) + ".pdf");
+						Converter.convertImageToPdf(Converter.convertFileToImage(file), out);
+					}
+				});
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -82,21 +102,26 @@ public class ConverterController {
 	 */
 	private void addFiles() {
 		FileChooser chooser = new FileChooser();
+		chooser.setInitialDirectory(new File(Config.getInstance().getDefaultFolder()));
+		chooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("Convertible Files", "*.png", "*.jpg", "*.jpeg", "*.pdf")
+		);
 
 		List<File> files = chooser.showOpenMultipleDialog(null);
-		lwFiles.getItems().addAll(files.toArray(new File[]{}));
+		lwFiles.getItems().addAll(Objects.requireNonNull(files).toArray(new File[]{}));
 	}
 
 	/**
 	 * removes all selected files in the {@link ListView}
 	 */
+	@FXML
 	private void removeFiles() {
-		System.out.println("REMOVE FILES");
 		ObservableList<Integer> indices = lwFiles.getSelectionModel().getSelectedIndices();
 		// maybe sort indices
 		for (int i = indices.size() - 1; i >= 0; i--) {
 			lwFiles.getItems().remove((int) indices.get(i));
 		}
+		lwFiles.getSelectionModel().clearSelection();
 	}
 
 	/**
@@ -105,5 +130,4 @@ public class ConverterController {
 	private void clear() {
 		lwFiles.getItems().clear();
 	}
-
 }
