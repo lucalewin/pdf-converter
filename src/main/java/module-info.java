@@ -15,12 +15,15 @@ module lucraft.converter {
 	requires kernel;
 	requires layout;
 	requires io;
-	requires annotations;
-
+	requires com.google.gson;
+	requires org.jetbrains.annotations;
 	requires org.apache.commons.io;
 
 	opens net.lucraft.converter to javafx.fxml;
 	opens net.lucraft.converter.ui to javafx.fxml;
+	opens net.lucraft.converter.config to com.google.gson, javafx.fxml;
 
 	exports net.lucraft.converter to javafx.graphics;
+	exports net.lucraft.converter.config to javafx.graphics, com.google.gson;
+
 }
