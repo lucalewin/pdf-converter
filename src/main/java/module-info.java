@@ -19,11 +19,10 @@ module lucraft.converter {
 	requires org.jetbrains.annotations;
 	requires org.apache.commons.io;
 
-	opens net.lucraft.converter to javafx.fxml;
-	opens net.lucraft.converter.ui to javafx.fxml;
-	opens net.lucraft.converter.config to com.google.gson, javafx.fxml;
+	opens net.lucraft.converter to com.google.gson;
+	opens net.lucraft.converter.gui.controller to javafx.fxml;
+	opens net.lucraft.converter.gui.fragment to javafx.fxml;
 
-	exports net.lucraft.converter to javafx.graphics;
-	exports net.lucraft.converter.config to javafx.graphics, com.google.gson;
-
+	exports net.lucraft.converter.gui to javafx.graphics;
+	exports net.lucraft.converter.gui.controller to javafx.graphics, javafx.fxml;
 }
