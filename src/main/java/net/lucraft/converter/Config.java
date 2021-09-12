@@ -1,4 +1,4 @@
-package net.lucraft.converter.config;
+package net.lucraft.converter;
 
 import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
@@ -87,6 +87,19 @@ public class Config {
 		this.lastFileLocation = lastFileLocation;
 	}
 
+	public void save() throws IOException {
+		if (Files.notExists(ROOT_FOLDER)) {
+			Files.createDirectories(ROOT_FOLDER);
+		}
+
+		if (Files.notExists(CONFIG_FILE)) {
+			Files.createFile(CONFIG_FILE);
+		}
+
+		String json = GSON.toJson(this);
+		Files.writeString(CONFIG_FILE, json);
+	}
+
 	public String getDefaultFolder() {
 		return defaultFolder;
 	}
@@ -97,5 +110,17 @@ public class Config {
 
 	public String getLastFileLocation() {
 		return lastFileLocation;
+	}
+
+	public void setDefaultFolder(String defaultFolder) {
+		this.defaultFolder = defaultFolder;
+	}
+
+	public void setDefaultFilename(String defaultFilename) {
+		this.defaultFilename = defaultFilename;
+	}
+
+	public void setLastFileLocation(String lastFileLocation) {
+		this.lastFileLocation = lastFileLocation;
 	}
 }

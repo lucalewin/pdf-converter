@@ -1,4 +1,4 @@
-package net.lucraft.converter.ui;
+package net.lucraft.converter.gui.fragment;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import net.lucraft.converter.ConverterApplication;
+import net.lucraft.converter.gui.ConverterApplication;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;

@@ -8,7 +8,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane minHeight="480.0" minWidth="720.0" prefHeight="540.0" prefWidth="836.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.lucraft.converter.ConverterController">
+<AnchorPane minHeight="480.0" minWidth="720.0" prefHeight="540.0" prefWidth="836.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.lucraft.converter.gui.controller.ConverterController">
    <children>
       <ButtonBar buttonMinWidth="32.0" buttonOrder="" layoutX="16.0" layoutY="14.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
         <buttons>
@@ -21,9 +21,9 @@
       </ButtonBar>
       <ListView fx:id="lwFiles" layoutX="16.0" layoutY="58.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="58.0">
          <contextMenu>
-            <ContextMenu fx:id="listViewContextMenu">
+            <ContextMenu>
               <items>
-                <MenuItem fx:id="listViewMenuItemDelete" mnemonicParsing="false" onAction="#removeFiles" text="Delete" />
+                <MenuItem fx:id="listViewMenuItemDelete" mnemonicParsing="false" onAction="#removeFiles" text="Remove File(s)        " />
               </items>
             </ContextMenu>
          </contextMenu></ListView>

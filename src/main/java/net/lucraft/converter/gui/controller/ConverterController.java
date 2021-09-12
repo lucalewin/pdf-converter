@@ -1,12 +1,14 @@
-package net.lucraft.converter;
+package net.lucraft.converter.gui.controller;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.stage.FileChooser;
-import net.lucraft.converter.config.Config;
-import net.lucraft.converter.ui.FileListCell;
+import net.lucraft.converter.Converter;
+import net.lucraft.converter.FileUtil;
+import net.lucraft.converter.Config;
+import net.lucraft.converter.gui.fragment.FileListCell;
 
 import java.io.File;
 import java.util.List;
@@ -21,7 +23,6 @@ public class ConverterController {
 	@FXML private CheckBox cbCombine;
 	@FXML private ListView<File> lwFiles;
 
-	@FXML private ContextMenu listViewContextMenu;
 	@FXML private MenuItem listViewMenuItemDelete;
 
 	public ConverterController() { }
@@ -38,6 +39,7 @@ public class ConverterController {
 		lwFiles.setOnDragDropped(this::onDragDropped);
 		lwFiles.setOnDragExited(event -> lwFiles.setStyle("-fx-background-color: #fff"));
 		listViewMenuItemDelete.setDisable(true);
+		listViewMenuItemDelete.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
 	}
 
 	/**
@@ -62,6 +64,9 @@ public class ConverterController {
 
 	private void onDragDropped(DragEvent event) {
 		lwFiles.getItems().addAll(event.getDragboard().getFiles());
+		if (!lwFiles.getItems().isEmpty()) {
+			listViewMenuItemDelete.setDisable(false);
+		}
 	}
 
 	/**
@@ -69,28 +74,29 @@ public class ConverterController {
 	 */
 	private void convert() {
 		try {
-			List<File> files = lwFiles.getItems();
-
 			if (cbCombine.isSelected()) {
 				FileChooser chooser = new FileChooser();
-				chooser.setInitialDirectory(new File(Config.getInstance().getDefaultFolder()));
+				chooser.setInitialDirectory(new File(
+						!Objects.equals(Config.getInstance().getLastFileLocation(), "") ?
+								Config.getInstance().getLastFileLocation() :
+								Config.getInstance().getDefaultFolder()));
 				chooser.setInitialFileName(Config.getInstance().getDefaultFilename());
 				chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF File", "*.pdf"));
 
 				File out = chooser.showSaveDialog(null);
 
 				if (out != null) {
-					Converter.merge(files, out);
+					Config.getInstance().setLastFileLocation(out.getParent());
+					Converter.merge(lwFiles.getItems(), out);
 				}
 			} else {
-//				files.stream().filter(FileUtil::isImageFile).forEach(file -> );
-				files.forEach(file -> {
+				for (File file : lwFiles.getItems()) {
 					if (FileUtil.isImageFile(file)) {
 						String filename = file.getAbsolutePath();
 						File out = new File(filename.substring(0, filename.lastIndexOf('.')) + ".pdf");
 						Converter.convertImageToPdf(Converter.convertFileToImage(file), out);
 					}
-				});
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -109,6 +115,13 @@ public class ConverterController {
 
 		List<File> files = chooser.showOpenMultipleDialog(null);
 		lwFiles.getItems().addAll(Objects.requireNonNull(files).toArray(new File[]{}));
+
+		System.out.println("ADDED FILES");
+		System.out.println("IS EMPTY: " + lwFiles.getItems().isEmpty());
+
+		if (!lwFiles.getItems().isEmpty()) {
+			listViewMenuItemDelete.setDisable(false);
+		}
 	}
 
 	/**
@@ -122,6 +135,10 @@ public class ConverterController {
 			lwFiles.getItems().remove((int) indices.get(i));
 		}
 		lwFiles.getSelectionModel().clearSelection();
+
+		if (lwFiles.getItems().isEmpty()) {
+			listViewMenuItemDelete.setDisable(true);
+		}
 	}
 
 	/**
@@ -129,5 +146,6 @@ public class ConverterController {
 	 */
 	private void clear() {
 		lwFiles.getItems().clear();
+		listViewMenuItemDelete.setDisable(true);
 	}
 }
