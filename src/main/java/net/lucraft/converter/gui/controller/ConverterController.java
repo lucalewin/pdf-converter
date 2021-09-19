@@ -9,12 +9,16 @@ import net.lucraft.converter.Converter;
 import net.lucraft.converter.FileUtil;
 import net.lucraft.converter.Config;
 import net.lucraft.converter.gui.fragment.FileListCell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
 public class ConverterController {
+
+	private static final Logger logger = LoggerFactory.getLogger(ConverterController.class);
 
 	@FXML private Button btnConvert;
 	@FXML private Button btnAddFiles;
@@ -29,6 +33,7 @@ public class ConverterController {
 
 	@FXML
 	private void initialize() {
+		logger.debug("initializing '" + ConverterController.class.getName() + "' ...");
 		btnConvert.setOnAction(event -> convert());
 		btnAddFiles.setOnAction(event -> addFiles());
 		btnRemoveFiles.setOnAction(event -> removeFiles());
@@ -40,6 +45,7 @@ public class ConverterController {
 		lwFiles.setOnDragExited(event -> lwFiles.setStyle("-fx-background-color: #fff"));
 		listViewMenuItemDelete.setDisable(true);
 		listViewMenuItemDelete.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
+		logger.debug("initialized '" + ConverterController.class.getName() + "'");
 	}
 
 	/**
@@ -64,15 +70,17 @@ public class ConverterController {
 
 	private void onDragDropped(DragEvent event) {
 		lwFiles.getItems().addAll(event.getDragboard().getFiles());
-		if (!lwFiles.getItems().isEmpty()) {
-			listViewMenuItemDelete.setDisable(false);
-		}
+		updateContextMenu();
 	}
 
 	/**
 	 * tries to convert all files in the {@link ListView} to pdf(s)
 	 */
 	private void convert() {
+		if (lwFiles.getItems().isEmpty()) {
+			return;
+		}
+
 		try {
 			if (cbCombine.isSelected()) {
 				FileChooser chooser = new FileChooser();
@@ -116,12 +124,7 @@ public class ConverterController {
 		List<File> files = chooser.showOpenMultipleDialog(null);
 		lwFiles.getItems().addAll(Objects.requireNonNull(files).toArray(new File[]{}));
 
-		System.out.println("ADDED FILES");
-		System.out.println("IS EMPTY: " + lwFiles.getItems().isEmpty());
-
-		if (!lwFiles.getItems().isEmpty()) {
-			listViewMenuItemDelete.setDisable(false);
-		}
+		updateContextMenu();
 	}
 
 	/**
@@ -136,9 +139,7 @@ public class ConverterController {
 		}
 		lwFiles.getSelectionModel().clearSelection();
 
-		if (lwFiles.getItems().isEmpty()) {
-			listViewMenuItemDelete.setDisable(true);
-		}
+		updateContextMenu();
 	}
 
 	/**
@@ -147,5 +148,9 @@ public class ConverterController {
 	private void clear() {
 		lwFiles.getItems().clear();
 		listViewMenuItemDelete.setDisable(true);
+	}
+
+	private void updateContextMenu() {
+		listViewMenuItemDelete.setDisable(lwFiles.getItems().isEmpty());
 	}
 }
