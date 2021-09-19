@@ -17,7 +17,7 @@ Lucraft PDF-Converter Description
 """
 
 ext {
-    junitVersion = '5.7.2'
+    junitVersion = '5.8.0'
 }
 
 sourceCompatibility = '16'
@@ -104,12 +104,12 @@ jlink {
             }
 //            if (installerType == 'deb') {
 //                installerOptions += [
-////                        '--linux-deb-maintainer', 'maintainer@example.com'
+//                        '--linux-deb-maintainer', 'maintainer@example.com'
 //                ]
 //            }
 //            if (installerType == 'rpm') {
 //                installerOptions += [
-////                        '--linux-rpm-license-type', 'GPLv3'
+//                        '--linux-rpm-license-type', 'GPLv3'
 //                ]
 //            }
         } else {
