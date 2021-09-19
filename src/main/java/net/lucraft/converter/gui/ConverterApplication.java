@@ -12,8 +12,6 @@ import java.io.IOException;
 public class ConverterApplication extends Application {
 	@Override
 	public void start(Stage stage) throws IOException {
-		startup();
-
 		FXMLLoader fxmlLoader = new FXMLLoader(ConverterApplication.class.getResource("converter.fxml"));
 		Screen screen = Screen.getPrimary();
 		Scene scene = new Scene(fxmlLoader.load(), screen.getBounds().getWidth() / 2, screen.getBounds().getHeight() / 2);
@@ -32,9 +30,4 @@ public class ConverterApplication extends Application {
 
 		stage.show();
 	}
-
-	public void startup() {
-		Config.load();
-	}
-
 }
